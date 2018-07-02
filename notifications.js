@@ -5,6 +5,7 @@ const console = require('better-console')
 
 // slack init
 const {SLACK_WEBHOOK_URL, SLACK_WEBHOOK_URL_CEA_GENERAL} = process.env
+
 const slackDefault = new Slack(SLACK_WEBHOOK_URL)
 const slackCEAGeneral = new Slack(SLACK_WEBHOOK_URL_CEA_GENERAL)
 
@@ -28,10 +29,11 @@ async function send (message, channel) {
   switch (channel) {
     case "#cea-only_general":
       slackInstance = slackCEAGeneral
+      break
     default:
       slackInstance = slackDefault
   }
-  await limiter.schedule (() => slackInstance.send(options))
+  await limiter.schedule(() => slackInstance.send(options))
 }
 
 async function sendError (err) {
