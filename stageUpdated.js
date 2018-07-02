@@ -19,15 +19,20 @@ const APPLICANTS_TABLE_NAME = 'Applicants'
       console.info(`No records to update!`)
       return
     }
+    // collectors for batched updates
+    const batches = {
+      teamFeedbackRequest: []
+    }
     console.info(`Notifying of updates`)
     for (let Record of ChangedRecords) {
       try {
         // send the notification
         await Notifications.statusChanged(Record)
-        // some statuses get specific notifications:
+        // some statuses get specific/batched notifications:
         switch (Record.get('Stage')) {
           case 'Team Comments':
-            await Notifications.teamFeedbackRequest(Record)
+            batches.teamFeedbackRequest.push(Record)
+            break
           default:
             // do nothing
         }
@@ -38,6 +43,13 @@ const APPLICANTS_TABLE_NAME = 'Applicants'
         console.warn(err.message)
         Notifications.sendError(err)
       }
+    }
+    // send batched notifications
+    try {
+      await Notifications.teamFeedbackRequest(batches.teamFeedbackRequest)
+    } catch (err) {
+      console.warn(err.message)
+      Notifications.sendError(err)
     }
   } catch (err) {
     console.error(err)

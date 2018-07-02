@@ -70,19 +70,32 @@ View/edit their application here: https://airtable.com/tbl36097FfhrqQj26/viwMFmN
   })
 }
 
-async function teamFeedbackRequest (Record) {
-  const text = [
-    `:bust_in_silhouette: *${Record.get('Name')}* has recently applied to work at CEA.`,
-    `\n\n`,
-    `If you have information that might be relevant to hiring them, and you're happy to share it, `,
-    `please provide it using the CEA Recruitment Team Feedback form here: `,
-    `https://airtable.com/shrOnILyLdp0sDmdx`,
-    `\n\n`,
-    `_(You'll need to be signed into an Airtable account linked to an `,
-    `\`@centreforeffectivealtruism.org\` email address)_`
-  ].join('')
+async function teamFeedbackRequest (Records) {
+  if (!Records || !Array.isArray(Records)) throw new Error(`variabele 'Records' is not an array`)
+  if (!Records.length) return
+  const text = []
+  switch (Records.length) {
+    case 1:
+      text.push(`:bust_in_silhouette: *${Records[0].get('Name')}* has recently applied to work at CEA.`)
+      break
+    default:
+      text.push(`The following people have recently applied to work at CEA:\n`)
+      text.push(Records.map(Record => `:bust_in_silhouette: *${Record.get('Name')}*`).join('\n'))
+  }
+  // main message body
+  text.push(
+    [
+      `\n\n`,
+      `If you have information that might be relevant to hiring them, and you're happy to share it, `,
+      `please provide it using the CEA Recruitment Team Feedback form here: `,
+      `https://airtable.com/shrOnILyLdp0sDmdx`,
+      `\n\n`,
+      `_(You'll need to be signed into an Airtable account linked to an `,
+      `\`@centreforeffectivealtruism.org\` email address)_`
+    ].join('')
+  )
   await send({
-    text
+    text: text.join('')
   }, '#cea-only_general')
 }
 
