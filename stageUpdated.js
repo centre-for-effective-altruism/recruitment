@@ -22,7 +22,16 @@ const APPLICANTS_TABLE_NAME = 'Applicants'
     console.info(`Notifying of updates`)
     for (let Record of ChangedRecords) {
       try {
+        // send the notification
         await Notifications.statusChanged(Record)
+        // some statuses get specific notifications:
+        switch (Record.get('Stage')) {
+          case 'Team Comments':
+            await Notifications.teamFeedbackRequest(Record)
+          default:
+            // do nothing
+        }
+        // if the notification(s) sent OK, change the status
         await syncRecordPreviousStage(Record)
         console.info(`Notification sent for ${Record.get('Name')}`)
       } catch (err) {

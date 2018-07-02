@@ -3,8 +3,10 @@ const Slack = require('node-slack')
 const Bottleneck = require('bottleneck')
 const console = require('better-console')
 
-const {SLACK_WEBHOOK_URL} = process.env
-const slack = new Slack(SLACK_WEBHOOK_URL)
+// slack init
+const {SLACK_WEBHOOK_URL, SLACK_WEBHOOK_URL_CEA_GENERAL} = process.env
+const slackDefault = new Slack(SLACK_WEBHOOK_URL)
+const slackCEAGeneral = new Slack(SLACK_WEBHOOK_URL_CEA_GENERAL)
 
 const AIRTABLE_LOGO_URL = 'https://support.airtable.com/hc/article_attachments/360001025028/airtable_logo_256.png'
 
@@ -20,9 +22,16 @@ const slackMessageDefaults = {
   unfurl_links: false
 }
 
-async function send (message) {
+async function send (message, channel) {
   const options = Object.assign({}, slackMessageDefaults, message)
-  await limiter.schedule (() => slack.send(options))
+  let slackInstance
+  switch (channel) {
+    case "#cea-only_general":
+      slackInstance = slackCEAGeneral
+    default:
+      slackInstance = slackDefault
+  }
+  await limiter.schedule (() => slackInstance.send(options))
 }
 
 async function sendError (err) {
@@ -59,5 +68,20 @@ View/edit their application here: https://airtable.com/tbl36097FfhrqQj26/viwMFmN
   })
 }
 
+async function teamFeedbackRequest (Record) {
+  const text = [
+    `:bust_in_silhouette: *${Record.get('Name')}* has recently applied to work at CEA.`,
+    `\n\n`,
+    `If you have information that might be relevant to hiring them, and you're happy to share it, `,
+    `please provide it using the CEA Recruitment Team Feedback form here: `,
+    `https://airtable.com/shrOnILyLdp0sDmdx`,
+    `\n\n`,
+    `_(You'll need to be signed into an Airtable account linked to an `,
+    `\`@centreforeffectivealtruism.org\` email address)_`
+  ].join('')
+  await send({
+    text
+  }, '#cea-only_general')
+}
 
-module.exports = {statusChanged, sendError}
+module.exports = {statusChanged, teamFeedbackRequest, sendError}
