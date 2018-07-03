@@ -99,4 +99,24 @@ async function teamFeedbackRequest (Records) {
   }, '#cea-only_general')
 }
 
-module.exports = {statusChanged, teamFeedbackRequest, sendError}
+async function outreachSuggestedPerson (Record) {
+  const text = []
+  text.push(
+    [
+      `${Record.get('Responsible Person Slack Handle')} thinks that `,
+      `:bust_in_silhouette: `
+      `*${Record.get('Potential Candidate Name')}* would be a good candidate `,
+      `for the following roles: ${Record.get('Position Names')}.`,
+      `\n\n`,
+      `They've suggested that ${Record.get('Suggested Contact Person Slack Handle')} `,
+      `get in touch with ${Record.get('Potential Candidate Name')} to encourage them `,
+      `to apply to work at CEA.`
+    ].join('')
+  )
+  await send({
+    text: text.join('')
+  })
+}
+
+
+module.exports = {statusChanged, teamFeedbackRequest, outreachSuggestedPerson, sendError}

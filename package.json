@@ -12,6 +12,8 @@
     "node-slack": "^0.0.7"
   },
   "scripts": {
-    "start": "node stageUpdated.js"
+    "start": "node stageUpdated && node outreach",
+    "stageUpdated": "node stageUpdated",
+    "outreach": "node outreach"
   }
 }

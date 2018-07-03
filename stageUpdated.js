@@ -13,6 +13,8 @@ const APPLICANTS_TABLE_NAME = 'Applicants'
 
 ;(async () => {
   try {
+    console.info('Running Stage Updated')
+    console.info('=====================')
     console.info('Getting records')
     const ChangedRecords = await getRecordsWithStageChange()
     if (!ChangedRecords.length) {
