@@ -104,7 +104,7 @@ async function outreachSuggestedPerson (Record) {
   text.push(
     [
       `${Record.get('Responsible Person Slack Handle')} thinks that `,
-      `:bust_in_silhouette: `
+      `:bust_in_silhouette: `,
       `*${Record.get('Potential Candidate Name')}* would be a good candidate `,
       `for the following roles: ${Record.get('Position Names')}.`,
       `\n\n`,
