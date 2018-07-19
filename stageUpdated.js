@@ -1,6 +1,7 @@
 require('dotenv').load({silent: true})
 const {AIRTABLE_API_KEY, AIRTABLE_BASE_ID} = process.env
 const console = require('better-console')
+const moment = require('moment')
 const Airtable = require('airtable')
 const Notifications = require('./notifications')
 // airtable config
@@ -58,7 +59,6 @@ const APPLICANTS_TABLE_NAME = 'Applicants'
   }
 })()
 
-
 async function getRecordsWithStageChange () {
   let Records = []
   // get all records where there is an unsynced status change
@@ -83,6 +83,7 @@ async function syncRecordPreviousStage (Record) {
   const currentStage = Record.get('Stage')
   const recordId = Record.id
   await base(APPLICANTS_TABLE_NAME).update(recordId, {
-    "Previous Stage": currentStage
+    "Previous Stage": currentStage,
+    "Stage Last Updated": moment().format()
   })
 }

@@ -8,6 +8,7 @@
     "better-console": "^1.0.1",
     "bottleneck": "^2.5.0",
     "dotenv": "^6.0.0",
+    "moment": "^2.22.2",
     "mz": "^2.7.0",
     "node-slack": "^0.0.7"
   },
@@ -15,5 +16,8 @@
     "start": "node stageUpdated && node outreach",
     "stageUpdated": "node stageUpdated",
     "outreach": "node outreach"
+  },
+  "engines": {
+    "node": "8.11"
   }
 }
